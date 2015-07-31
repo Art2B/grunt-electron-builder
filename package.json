@@ -40,6 +40,11 @@
     "gruntplugin"
   ],
   "dependencies": {
-    "asar": "^0.7.2"
+    "asar": "^0.7.2",
+    "download": "^4.1.4",
+    "fs": "0.0.2",
+    "fs-extra": "^0.22.1",
+    "promise": "^7.0.3",
+    "request": "^2.60.0"
   }
 }

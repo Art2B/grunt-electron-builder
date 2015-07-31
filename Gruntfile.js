@@ -33,6 +33,7 @@ module.exports = function(grunt) {
       default_options: {
         options: {
           src: __dirname+'/app/',
+          dest: './build'
         }
       },
       custom_options: {
