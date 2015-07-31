@@ -37,7 +37,9 @@
     "grunt": "~0.4.5"
   },
   "keywords": [
-    "gruntplugin"
+    "gruntplugin",
+    "electron",
+    "build"
   ],
   "dependencies": {
     "asar": "^0.7.2",
