@@ -14,14 +14,17 @@ var request = require('request');
 var Promise = require('promise');
 var Download = require('download');
 
+var supportedPlatforms = ['linux-x64', 'win32-x64'];
+
 module.exports = function(grunt) {
   grunt.registerMultiTask('electron_builder', 'Grunt plugin to build your electron app', function() {
     var options = this.options() || {};
     options.appName = this.options().appName || 'electron';
     options.dest = this.options().dest || './build';
-    options.platforms = this.options().platforms || ['linux-x64'];
+    options.platforms = checkPlatforms(this.options().platforms) || ['linux-x64'];
+
     var done = this.async();
-    
+
     // Remove old build folder to prevent conflicts and bugs
     fs.removeSync(options.dest);
 
@@ -57,7 +60,17 @@ module.exports = function(grunt) {
     // rename electron executable to app name
   });
 
+  function checkPlatforms(platformArray){
+    var checkedArray = [];
 
+    platformArray.forEach(function(element){
+      if(supportedPlatforms.indexOf(element) >= 0){
+        checkedArray.push(element);
+      }
+    });
+
+    return checkedArray;
+  }
   function getLastRelease(callback){
     request({
       url: 'https://api.github.com/repos/atom/electron/releases/latest',
