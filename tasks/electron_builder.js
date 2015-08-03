@@ -13,6 +13,7 @@ var fs = require('fs-extra')
 var request = require('request');
 var Promise = require('promise');
 var Download = require('download');
+var winresourcer = require('winresourcer');
 
 var supportedPlatforms = ['linux-x64', 'win32-x64'];
 
@@ -30,9 +31,8 @@ module.exports = function(grunt) {
     fs.removeSync(options.dest);
 
     new Promise(function(fulfill, reject){
-      console.log('Compress application');
+      console.log('Build application');
       asar.createPackage(options.src, './.tmp/app.asar', function() {
-        console.log('Compression done');
         fulfill();
       });
     }).then(function(){
@@ -90,6 +90,7 @@ module.exports = function(grunt) {
   };
   function downloadReleases(releasesArray, version, destFolder, callback){
     var releasesDownloaded = 0;
+    connsole.log('Download prebuilt binaries');
     releasesArray.forEach(function(element){
       var url = 'https://github.com/atom/electron/releases/download/'+version+'/electron-'+version+'-'+element+'.zip';
       console.log(url);

@@ -37,7 +37,7 @@ module.exports = function(grunt) {
       default_options: {
         options: {
           src: __dirname+'/app/',
-          platforms: ['linux-x64', 'win32-x64', 'yolo', 'swag']
+          platforms: ['linux-x64', 'win32-x64']
         }
       },
     },
