@@ -23,6 +23,7 @@ module.exports = function(grunt) {
     options.dest = this.options().dest || './build';
     options.platforms = checkPlatforms(this.options().platforms) || ['linux-x64'];
 
+
     var done = this.async();
 
     // Remove old build folder to prevent conflicts and bugs
@@ -113,10 +114,10 @@ module.exports = function(grunt) {
         appFilesCopied++;
         switch(element){
           case 'linux-x64':
-            fs.renameSync(destFolder+'/'+element+'/electron', destFolder+'/'+element+'/'+appName.toLowerCase());
+            fs.renameSync(destFolder+'/'+element+'/electron', destFolder+'/'+element+'/'+appName.toLowerCase().replace(' ', '-'));
             break;
           case 'win32-x64':
-            fs.renameSync(destFolder+'/'+element+'/electron.exe', destFolder+'/'+element+'/'+appName.toLowerCase()+'.exe');
+            fs.renameSync(destFolder+'/'+element+'/electron.exe', destFolder+'/'+element+'/'+appName.toLowerCase().replace(' ', '-')+'.exe');
             break;
           default:
             console.log('platform not supported');
