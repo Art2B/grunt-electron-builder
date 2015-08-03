@@ -16,12 +16,14 @@ var Download = require('download');
 
 module.exports = function(grunt) {
   grunt.registerMultiTask('electron_builder', 'Grunt plugin to build your electron app', function() {
-    var options = this.options();
+    var options = this.options() || {};
+    options.appName = this.options().appName || 'electron';
     options.dest = this.options().dest || './build';
+    options.platforms = this.options().platforms || ['linux-x64'];
     var done = this.async();
     
     // Remove old build folder to prevent conflicts and bugs
-    fs.removeSync('./build');
+    fs.removeSync(options.dest);
 
     new Promise(function(fulfill, reject){
       console.log('Compress application');
@@ -37,21 +39,19 @@ module.exports = function(grunt) {
       });
     }).then(function(release){
       return new Promise(function(fulfill, reject){
-        // download prebuilt binaries
-        downloadReleases(['linux-x64'], release, options.dest,function(){
+        downloadReleases(options.platforms, release, options.dest,function(){
           fulfill();
         });
       });
     }).then(function(){
-      // Move app.asar file in prebuilt binaries for each platforms
       return new Promise(function(fulfill, reject){
-        copyAppFile('linux-x64', options.dest,function(){
+        copyAppFile(options.platforms, options.dest, options.appName, function(){
           fulfill();
         });
       });
     }).then(function(){
       // Clean temp folder
-      fs.removeSync('./tmp/app.asar');
+      fs.removeSync('./.tmp/app.asar');
       done();
     });
     // rename electron executable to app name
@@ -75,22 +75,46 @@ module.exports = function(grunt) {
     });
   };
   function downloadReleases(releasesArray, version, destFolder, callback){
-    releasesArray.forEach(function(element, index){
+    var releasesDownloaded = 0;
+    releasesArray.forEach(function(element){
       var url = 'https://github.com/atom/electron/releases/download/'+version+'/electron-'+version+'-'+element+'.zip';
       console.log(url);
       new Download({mode: '755', extract: true})
           .get(url)
           .dest(destFolder+'/'+element)
-          .run(callback);
+          .run(function(){
+            releasesDownloaded++;
+            if(releasesDownloaded === releasesArray.length){
+              callback();
+            }
+          });
     });
   };
-  function copyAppFile(release, destFolder, callback){
-    fs.copy('./.tmp/app.asar', destFolder+'/'+release+'/resources/app.asar', function(err){
-      if(err){
-        console.error(err);
-      }
-      callback();
-    })
-  }
+  function copyAppFile(platforms, destFolder, appName, callback){
+    var appFilesCopied = 0;
+    platforms.forEach(function(element){
+      fs.copy('./.tmp/app.asar', destFolder+'/'+element+'/resources/app.asar', function(err){
+        if(err){
+          console.error(err);
+        }
+        appFilesCopied++;
+        switch(element){
+          case 'linux-x64':
+            fs.renameSync(destFolder+'/'+element+'/electron', destFolder+'/'+element+'/'+appName.toLowerCase());
+            break;
+          case 'win32-x64':
+            fs.renameSync(destFolder+'/'+element+'/electron.exe', destFolder+'/'+element+'/'+appName.toLowerCase()+'.exe');
+            break;
+          default:
+            console.log('platform not supported');
+            break;
+        }
+        if(appFilesCopied == platforms.length){
+          callback();
+        }
+      });
+    });
 
+
+  };
 };

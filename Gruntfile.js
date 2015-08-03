@@ -30,18 +30,16 @@ module.exports = function(grunt) {
 
     // Configuration to be run (and then tested).
     electron_builder: {
+      options: {
+        appName: 'Arthur npm',
+        dest: './build',
+      },
       default_options: {
         options: {
           src: __dirname+'/app/',
-          dest: './build'
+          platforms: ['linux-x64', 'win32-x64']
         }
       },
-      custom_options: {
-        options: {
-          separator: ': ',
-          punctuation: ' !!!'
-        }
-      }
     },
 
     // Unit tests.
