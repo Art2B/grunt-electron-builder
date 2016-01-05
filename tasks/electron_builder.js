@@ -90,7 +90,7 @@ module.exports = function(grunt) {
   };
   function downloadReleases(releasesArray, version, destFolder, callback){
     var releasesDownloaded = 0;
-    connsole.log('Download prebuilt binaries');
+    console.log('Download prebuilt binaries');
     releasesArray.forEach(function(element){
       var url = 'https://github.com/atom/electron/releases/download/'+version+'/electron-'+version+'-'+element+'.zip';
       console.log(url);
